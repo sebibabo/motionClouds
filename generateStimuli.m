@@ -29,7 +29,7 @@ Bv_1 = 1;
 % hardware dependent:
 N_X = 512; 
 N_Y = N_X ;
-N_frame = N_X;% 2^size_T ;
+N_frame = 512;% 2^size_T ;
 V_X = v ;
 V_Y = 0. ;
 
@@ -53,8 +53,8 @@ end
 paramList = {} ;
 counter = 1;
 
-for sf_0 = [0.01 0.1]
-for Bv_2 = [ 0.001,  0.15, 0.3 ]
+for sf_0 = [ 0.01 0.011 0.012 0.013 0.014]
+for Bv_2 = [ 0.001]%,  0.15, 0.3 ]
   
   paramList{counter} = [sf_0, Bv_2];
   counter = counter+1;
@@ -71,13 +71,13 @@ for i = 1:length(paramList)
   z1 =  envelope_gabor_adap(fx, fy, ft, V_X, V_Y,Bv_1, sf_0, B_sf, loggabor,theta, B_theta, alpha) ;
   cloud1 = rectif(random_cloud(z1,1,0,0), 1,'Michelson',1) ;
   cloud1 = cloud1(:,:,1:framesPerMod*numberOfReps);
-  clear z1
+%   clear z1
   
   z2 =  envelope_gabor_adap(fx, fy, ft, V_X, V_Y,Bv_2, sf_0, B_sf, loggabor,theta, B_theta, alpha) ;
   cloud2 = rectif(random_cloud(z2,1,0,0), 1,'Michelson',1) ;
   cloud2 = cloud2(:,:,1:framesPerMod*numberOfReps);
 %   
-  clear z2
+%   clear z2
   %%
   idxs   = [1:framesPerMod*numberOfReps, zeros(1,mod(framesPerMod*numberOfReps,4))] ;
   idxs   = reshape(idxs,framesPerMod, []);

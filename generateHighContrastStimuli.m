@@ -33,7 +33,7 @@ allBvCoherent   = [0.0001 0.0005 0.001 0.005 0.01 0.05 0.1 0.5] ;
 sf_0 = 0.015;
 B_sf = 0.001 ;
 
-Nx = 1024; 
+Nx = 512*2; 
 Ny = Nx ;
 N_frame = 128;% 2^size_T ;
 
@@ -159,7 +159,7 @@ for i = 1:length(paramList)
   idxs_2  = idxs(:,2:2:end) ;
   mc_stim(:,:,idxs_1(:)) = cloudIncoherent ;
   mc_stim(:,:,idxs_2(:)) = cloudCoherent ;
-  
+  mc_stim = drawFixationCross(mc_stim,30);
   clear cloudIncoherent
   clear cloudCoherent
   % put fixation cross
