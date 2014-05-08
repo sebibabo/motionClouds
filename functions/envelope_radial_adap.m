@@ -9,7 +9,12 @@
         [N_X, N_Y, N_frame] = size(fx) ;
         % see http//en.wikipedia.org/wiki/Log-normal_distribution
         fr = frequency_radius_adap(fx, fy, 0, 1.) ;
-        env_radial = 1./fr.*exp(-.5*(log(fr/sf_0).^2)/(log((sf_0+B_sf)/sf_0).^2)) ;
+        if B_sf>0
+          env_radial = 1./fr.*exp(-.5*(log(fr/sf_0).^2)/(log((sf_0+B_sf)/sf_0).^2)) ;
+        else % octave bandwidth
+          B = abs(B_sf) *0.5*sqrt(0.5*log(2));
+          env_radial = exp(-.5*((log(fr/sf_0).^2)/B.^2)) ;
+        end
     else
         env_radial = exp(-.5*(frequency_radius(fx, fy, ft, 1.) - sf_0)^2/B_sf^2);
     end
