@@ -1,7 +1,7 @@
 addpath('functions')
 addpath(genpath('/home/bosse/dev/matlab/0.1-bosse/functionPool'))
 clear all
-path = 'mcPilotStimuli' ;
+path = 'mcPilotStimuliCorrectedFwhm_highterSpatFreq' ;
 
 
 % take monitor parameters
@@ -12,7 +12,7 @@ pixelPitch     = 0.2865/10 ;% pixelsize in cm
 % experiments parameter
 viewingDistance = 70 ;
 
-frameRefresh   = monitorRefresh/3 ;
+frameRefresh   = monitorRefresh/2 ;
 stimModRate    = 1 ;
 numberOfReps   = 12 ;
 framesPerMod   = frameRefresh/stimModRate/2 ; 
@@ -21,21 +21,27 @@ if ceil(framesPerMod) ~= framesPerMod
     disp('frames per modulation is not integer')
 end
 
-vAnglePerSec    = 4 ;
-vCoherent       = 8;%physicalSpeed2machineSpeed(vAnglePerSec,frameRefresh,viewingDistance,pixelPitch) ;
+vAnglePerSec    = 8.6;
+vCoherent       = physicalSpeed2machineSpeed(vAnglePerSec,frameRefresh,viewingDistance,pixelPitch) ;
 vIncoherent     = 0 ;
 
-BvIncoherent    = 0.5 ;
-allBvCoherent   = [0.0001 0.0005 0.001 0.005 0.01 0.05 0.1 0.5] ;
 
+allBvCoherent   = [0.0001 0.0005 0.001 0.005 0.01 0.05 0.1 0.5] ;
+% fwhm from moco
+fwhm = [10 0.6590 0.4425 0.3077 0.2712 0.2275 0.1839 0.0372];
+fwhm = [0.6590 0.4425 ];
+
+allBvCoherent = fwhm/(2*sqrt(2*log(2)));
+% BvIncoherent  = allBvCoherent(1);
+BvIncoherent  = 10/(2*sqrt(2*log(2)));
 %% set the the motion cloud parameters:
 %  spatial properties
-sf_0 = 0.015;
-B_sf = 0.001 ;
+sf_0 = 0.015*3;
+B_sf = 0.001*6 ;
 
-Nx = 512*2; 
+Nx = 512; 
 Ny = Nx ;
-N_frame = 128;% 2^size_T ;
+N_frame = 180;% 2^size_T ;
 
 VxCoherent   = vCoherent ;
 VxIncoherent = vIncoherent;
@@ -64,7 +70,7 @@ for BvCoherent = allBvCoherent
   counter = counter+1;
 end
 
-
+%%
 % for i = 1:length(paramList)
 for i = 1:length(paramList)
   tic
@@ -128,7 +134,7 @@ for i = 1:length(paramList)
   subplot(4,2,8)
   plot(fx(1,:,1),sIncoherent(ceil(Nx/2),:)./sCoherent(ceil(Nx/2),:))
     
-  saveTightFigure(h, [filenamePrefix,'.pdf']);
+  saveTightFigure(h, fullfile(path,[filenamePrefix,'.pdf']));
   close all
   %%
   idxs   = [1:framesPerMod*numberOfReps, zeros(1,mod(framesPerMod*numberOfReps,4))] ;
@@ -174,3 +180,5 @@ for i = 1:length(paramList)
   write2aviByYuv(uint32(mc_stim*255), fullfile(path,[filenamePrefix, '.avi']), frameRefresh) ;
   toc
 end
+%%
+
